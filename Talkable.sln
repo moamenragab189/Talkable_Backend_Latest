@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36811.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Talkable", "Talkable.csproj", "{DD575FB6-30FF-4AE6-97D5-4B6522BA4898}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD575FB6-30FF-4AE6-97D5-4B6522BA4898}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD575FB6-30FF-4AE6-97D5-4B6522BA4898}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD575FB6-30FF-4AE6-97D5-4B6522BA4898}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD575FB6-30FF-4AE6-97D5-4B6522BA4898}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2387335D-22E6-4E37-BE2B-918C203E662F}
+	EndGlobalSection
+EndGlobal
