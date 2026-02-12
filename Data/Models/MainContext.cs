@@ -4,7 +4,11 @@ namespace Talkable.Data.Models
 {
     public class MainContext : DbContext
     {
-        public MainContext() { }
+        private readonly IConfiguration _configuration;
+        public MainContext(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
         public virtual DbSet<User> Tb_Users { get; set; }
         public virtual DbSet<Courses> Tb_Courses { get; set; }
         public virtual DbSet<CourseFeedback> Tb_CourseFeedback { get; set; }
@@ -15,7 +19,7 @@ namespace Talkable.Data.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer("Server=localhost;Database=Talkable_Db;Trusted_Connection=True;TrustServerCertificate=True;");
+                optionsBuilder.UseSqlServer(_configuration["ConnectionStrings:MoamenConnection"]);
 
             }
         }
