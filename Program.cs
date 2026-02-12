@@ -1,4 +1,8 @@
 
+using Talkable.Data.Models;
+using Talkable.Data.Repositories;
+using Talkable.Services;
+
 namespace Talkable
 {
     public class Program
@@ -12,7 +16,9 @@ namespace Talkable
             builder.Services.AddControllers();
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
-
+            builder.Services.AddDbContext<MainContext>();
+            builder.Services.AddScoped<AuthRepository>();
+            builder.Services.AddScoped<AuthService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

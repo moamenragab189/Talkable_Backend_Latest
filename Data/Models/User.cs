@@ -24,8 +24,8 @@ namespace Talkable.Data.Models
         public string Password { get; set; }
         public UserType Type { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public ICollection<UserCourses> User_Courses { get; set; }
-        public ICollection<CourseFeedback> User_Feedback { get; set; }
+        public ICollection<UserCourses>? User_Courses { get; set; }
+        public ICollection<CourseFeedback>? User_Feedback { get; set; }
 
     }
     public enum UserType
