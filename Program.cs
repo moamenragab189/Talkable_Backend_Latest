@@ -1,5 +1,4 @@
-﻿
-using Talkable.Data.Models;
+﻿using Talkable.Data.Models;
 using Talkable.Data.Repositories;
 using Talkable.Services;
 
@@ -20,22 +19,19 @@ namespace Talkable
             builder.Services.AddDbContext<MainContext>();
             builder.Services.AddScoped<AuthRepository>();
             builder.Services.AddScoped<AuthService>();
-            //=======================================
-            builder.Services.AddScoped<AvatarService>();
-            builder.Services.AddScoped<AvatarRepository>();
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAll", policy =>
-                {
-                    policy
-                        .AllowAnyOrigin()           // أو حدد origins معينة في الإنتاج
-                        .AllowAnyMethod()           // ده مهم جدًا عشان يشمل OPTIONS + POST + ...
-                        .AllowAnyHeader()
-                        .SetPreflightMaxAge(TimeSpan.FromMinutes(10)); // اختياري بس مفيد
-                });
-            });
+
+            // add seeder service animation file work (Mg13)
+            builder.Services.AddScoped<AnimationSeeder>();
+
             var app = builder.Build();
-            app.UseCors("AllowAll");
+
+            // to make seeder animation file work (Mg13)
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<AnimationSeeder>();
+                await seeder.SeedAnimationsAsync();
+            }
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -48,7 +44,7 @@ namespace Talkable
             app.UseStaticFiles();
 
             app.UseAuthorization();
-            
+
 
             app.MapControllers();
 
