@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Talkable.Data;
 using Talkable.Data.Models;
 using Talkable.Services;
 
@@ -29,13 +30,13 @@ namespace Talkable.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> login(string email,string password)
+        public async Task<IActionResult> login([FromBody]usercred usercred)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var user= await _authService.login(email, password);
+            var user= await _authService.login(usercred.email, usercred.password);
             return Ok(user);
         }
     }
