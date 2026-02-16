@@ -7,9 +7,10 @@ namespace Talkable
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
 
             // Add services to the container.
 
@@ -19,7 +20,18 @@ namespace Talkable
             builder.Services.AddDbContext<MainContext>();
             builder.Services.AddScoped<AuthRepository>();
             builder.Services.AddScoped<AuthService>();
+
+            // add seeder service animation file work (Mg13)
+            builder.Services.AddScoped<AnimationSeeder>();
+
             var app = builder.Build();
+
+            // to make seeder animation file work (Mg13)
+            using (var scope = app.Services.CreateScope())
+            {
+                var seeder = scope.ServiceProvider.GetRequiredService<AnimationSeeder>();
+                await seeder.SeedAnimationsAsync();
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
@@ -29,10 +41,15 @@ namespace Talkable
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            // to use wwwroot folder (Mg13)
+            app.UseStaticFiles();
 
+            app.UseAuthorization();
+            
 
             app.MapControllers();
+
+
 
             app.Run();
         }
