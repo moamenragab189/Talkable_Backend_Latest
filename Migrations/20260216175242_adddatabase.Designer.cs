@@ -12,8 +12,8 @@ using Talkable.Data.Models;
 namespace Talkable.Migrations
 {
     [DbContext(typeof(MainContext))]
-    [Migration("20260216134400_CreateSignsTable")]
-    partial class CreateSignsTable
+    [Migration("20260216175242_adddatabase")]
+    partial class adddatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Talkable.Migrations
 {
     /// <inheritdoc />
-    public partial class CreateSignsTable : Migration
+    public partial class adddatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

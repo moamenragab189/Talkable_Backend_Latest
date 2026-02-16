@@ -1,56 +1,59 @@
-﻿using Talkable.Data.Models;
+﻿using Microsoft.AspNetCore.StaticFiles;
+using Talkable.Data.Models;
 using Talkable.Data.Repositories;
 using Talkable.Services;
 
-namespace Talkable
+var builder = WebApplication.CreateBuilder(args);
+
+// ===== Services =====
+builder.Services.AddControllers();
+
+// CORS
+builder.Services.AddCors(options =>
 {
-    public class Program
-    {
-        public static async Task Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+    options.AddPolicy("AllowAll",
+        policy => policy.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod());
+});
+
+// ==== Dependency Injection المهم ====
+// لازم كل service/ repository اللي controllers محتاجاها
+builder.Services.AddDbContext<MainContext>();
+builder.Services.AddScoped<AuthRepository>();
+builder.Services.AddScoped<AuthService>(); 
+builder.Services.AddScoped<AvatarRepository>();
+builder.Services.AddScoped<AvatarService>();
+// add seeder service animation file work (Mg13)
+ builder.Services.AddScoped<AnimationSeeder>();
 
 
-            // Add services to the container.
+// ===== Build App =====
+var app = builder.Build();
 
-            builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
-            builder.Services.AddDbContext<MainContext>();
-            builder.Services.AddScoped<AuthRepository>();
-            builder.Services.AddScoped<AuthService>();
+// CORS
+app.UseCors("AllowAll");
 
-            // add seeder service animation file work (Mg13)
-            builder.Services.AddScoped<AnimationSeeder>();
+// ===== Static Files for Animations =====
+var provider = new FileExtensionContentTypeProvider();
+provider.Mappings[".glb"] = "model/gltf-binary";
 
-            var app = builder.Build();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "Animations")
+    ),
+    RequestPath = "/Animations",
+    ContentTypeProvider = provider,
+    ServeUnknownFileTypes = true
+});
 
-            // to make seeder animation file work (Mg13)
-            using (var scope = app.Services.CreateScope())
-            {
-                var seeder = scope.ServiceProvider.GetRequiredService<AnimationSeeder>();
-                await seeder.SeedAnimationsAsync();
-            }
+// باقي wwwroot
+app.UseStaticFiles();
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
+// Routing + Controllers
+app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
 
-            app.UseHttpsRedirection();
-
-            // to use wwwroot folder (Mg13)
-            app.UseStaticFiles();
-
-            app.UseAuthorization();
-
-
-            app.MapControllers();
-
-
-
-            app.Run();
-        }
-    }
-}
+app.Run();

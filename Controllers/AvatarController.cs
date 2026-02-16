@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
+using Talkable.Data;
 using Talkable.Services;
 
 namespace Talkable.Controllers
@@ -14,9 +15,10 @@ namespace Talkable.Controllers
         {
             _avatarService = avatarService;
         }
-        [HttpGet]
-        public async Task<IActionResult> GetAction(string word)
+        [HttpPost]
+        public async Task<IActionResult> GetAction([FromBody]name name)
         {
+            string word = name.Name.Trim();
             if (string.IsNullOrEmpty(word))
             {
                 return BadRequest("Word is required.");
@@ -26,7 +28,11 @@ namespace Talkable.Controllers
                 {
                     return NotFound("No animation found for the given word.");
                 }
-            return Ok(animation_path);       
+            return Ok(new
+            {
+                url = $"{Request.Scheme}://{Request.Host}{animation_path}"
+            });
+            ;
         }
     }
 }

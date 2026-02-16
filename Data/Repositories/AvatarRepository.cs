@@ -13,8 +13,8 @@ namespace Talkable.Data.Repositories
             }
         public async Task<string?> GetAction(string word)
         {
-            return await _context.Tb_Signs.Where(s => s.name_ar == word)
-                .Select(s => s.Animation_path).FirstOrDefaultAsync();
+            return await _context.Tb_Signs.Where(s => s.Name == word)
+                .Select(s => s.AnimationPath).FirstOrDefaultAsync();
         }
     }
 }
