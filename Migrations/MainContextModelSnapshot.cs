@@ -87,42 +87,23 @@ namespace Talkable.Migrations
 
             modelBuilder.Entity("Talkable.Data.Models.Signs", b =>
                 {
-                    b.Property<int>("Sign_id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Sign_id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Animation_path")
+                    b.Property<string>("AnimationPath")
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
-                    b.Property<int>("Duration")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Fps")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Video_path")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(400)
                         .HasColumnType("nvarchar(400)");
 
-                    b.Property<string>("name_ar")
-                        .IsRequired()
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<string>("name_en")
-                        .IsRequired()
-                        .HasMaxLength(400)
-                        .HasColumnType("nvarchar(400)");
-
-                    b.Property<int>("type")
-                        .HasColumnType("int");
-
-                    b.HasKey("Sign_id");
+                    b.HasKey("Id");
 
                     b.ToTable("Tb_Signs");
                 });

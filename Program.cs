@@ -7,9 +7,10 @@ namespace Talkable
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
 
             // Add services to the container.
 
@@ -43,10 +44,15 @@ namespace Talkable
 
             app.UseHttpsRedirection();
 
-            app.UseAuthorization();
+            // to use wwwroot folder (Mg13)
+            app.UseStaticFiles();
 
+            app.UseAuthorization();
+            
 
             app.MapControllers();
+
+
 
             app.Run();
         }
