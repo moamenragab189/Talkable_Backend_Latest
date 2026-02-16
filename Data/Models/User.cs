@@ -30,8 +30,7 @@ namespace Talkable.Data.Models
     }
     public enum UserType
     {
-        Student,
-        Admin,
-        Instructor
+        deaf,
+        normal,
     }
 }
