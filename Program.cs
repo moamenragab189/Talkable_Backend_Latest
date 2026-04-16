@@ -2,6 +2,7 @@
 using Microsoft.Extensions.FileProviders;
 using Talkable.Data.Models;
 using Talkable.Data.Repositories;
+using Talkable.Hubs;
 using Talkable.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +27,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<AvatarRepository>();
 builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<AnimationSeeder>();
+builder.Services.AddSignalR();
 
 // ===== Build App =====
 var app = builder.Build();
@@ -72,7 +74,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 // باقي wwwroot (لو عندك css/js/صور أخرى)
 app.UseStaticFiles();
-
+app.MapHub<CallHub>("/callhub");
 // Routing + Controllers
 app.UseRouting();
 app.UseAuthorization();
