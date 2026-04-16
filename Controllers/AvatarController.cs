@@ -18,15 +18,15 @@ namespace Talkable.Controllers
         public async Task<IActionResult> GetAction(string word)
         {
             if (string.IsNullOrEmpty(word))
-            {
                 return BadRequest("Word is required.");
-            }
-          var animation_path= await _avatarService.GetAction(word);
-                if (animation_path == null)
-                {
-                    return NotFound("No animation found for the given word.");
-                }
-            return Ok(animation_path);       
+
+            var animation_path = await _avatarService.GetAction(word);
+
+            if (animation_path == null)
+                return NotFound("No animation found for the given word.");
+
+            // رجّع Object فيه url
+            return Ok(new { url = animation_path });
         }
     }
 }

@@ -14,12 +14,12 @@ namespace Talkable.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
-        public AuthController(AuthService authService) 
+        public AuthController(AuthService authService)
         {
             _authService = authService;
         }
-        [HttpPost("register")]  
-        public async Task<IActionResult> register(User user)
+        [HttpPost("register")]
+        public async Task<IActionResult> register([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -30,13 +30,13 @@ namespace Talkable.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> login([FromBody]usercred usercred)
+        public async Task<IActionResult> login([FromBody] usercred usercred)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            var user= await _authService.login(usercred.email, usercred.password);
+            var user = await _authService.login(usercred.email, usercred.password);
             return Ok(user);
         }
     }
