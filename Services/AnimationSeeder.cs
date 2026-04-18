@@ -68,31 +68,32 @@ namespace Talkable.Services
 
         public async Task SeedAnimationsAsync()
         {
-            // ✅ تم التعديل هنا: نستخدم ContentRootPath ونوجهه مباشرة لمجلد wwwroot/Animations
-            var path = Path.Combine(_env.ContentRootPath, "wwwroot", "Animations");
+            //// ✅ تم التعديل هنا: نستخدم ContentRootPath ونوجهه مباشرة لمجلد wwwroot/Animations
+            //var path = Path.Combine(_env.ContentRootPath, "wwwroot", "Animations");
 
-            if (!Directory.Exists(path))
-                return;
+            //if (!Directory.Exists(path))
+            //    return;
 
-            var files = Directory.GetFiles(path, "*.glb");
+            //var files = Directory.GetFiles(path, "*.glb");
 
-            var existingSigns = _context.Tb_Signs
-                .Select(s => s.Name)
-                .ToHashSet();
+            //var existingSigns = 
+            //    _context.Tb_Signs
+            //    .Select(s => s.Name)
+            //    .ToHashSet();
 
-            foreach (var file in files)
-            {
-                var fileName = Path.GetFileNameWithoutExtension(file);
+            //foreach (var file in files)
+            //{
+            //    var fileName = Path.GetFileNameWithoutExtension(file);
 
-                if (!existingSigns.Contains(fileName))
-                {
-                    _context.Tb_Signs.Add(new Signs
-                    {
-                        Name = fileName,
-                        AnimationPath = $"/Animations/{fileName}.glb"
-                    });
-                }
-            }
+            //    if (!existingSigns.Contains(fileName))
+            //    {
+            //        _context.Tb_Signs.Add(new Signs
+            //        {
+            //            Name = fileName,
+            //            AnimationPath = $"/Animations/{fileName}.glb"
+            //        });
+            //    }
+            //}
 
             await _context.SaveChangesAsync();
         }
