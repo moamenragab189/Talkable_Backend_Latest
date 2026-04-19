@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Talkable.Services;
@@ -6,6 +7,7 @@ using Talkable.Services;
 namespace Talkable.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class AvatarController : ControllerBase
     {

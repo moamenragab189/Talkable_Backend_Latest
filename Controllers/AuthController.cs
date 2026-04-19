@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using Talkable.Data;
@@ -10,16 +11,17 @@ namespace Talkable.Controllers
     [Route("api/[controller]")]
     [ApiController]
 
-
     public class AuthController : ControllerBase
     {
         private readonly AuthService _authService;
-        public AuthController(AuthService authService)
+        private readonly JwtService _jwtService;
+        public AuthController(AuthService authService, JwtService jwtService)
         {
             _authService = authService;
+            _jwtService = jwtService;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] User user)
         {
             if (!ModelState.IsValid)
             {
@@ -30,14 +32,20 @@ namespace Talkable.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> login([FromBody] usercred usercred)
+        public async Task<IActionResult> Login([FromBody] usercred usercred)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
             var user = await _authService.login(usercred.email, usercred.password);
-            return Ok(user);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+            var claims = _jwtService.AddUserClaims(user.Email, user.Type, user.User_Id);
+            var token = _jwtService.CreateToken(claims);
+            return Ok(new { AccessToken = token });
         }
     }
 }
