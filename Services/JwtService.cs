@@ -2,6 +2,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Talkable.Data.Entities;
 using Talkable.Data.Models;
 
 namespace Talkable.Services

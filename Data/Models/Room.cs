@@ -1,4 +1,4 @@
-﻿namespace Talkable.Data
+﻿namespace Talkable.Data.Models
 {
     public class Room
     {

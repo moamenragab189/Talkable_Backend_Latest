@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Talkable.Data.Models
+namespace Talkable.Data.Entities
 {
     //many to many table
     public class UserCourses

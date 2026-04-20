@@ -1,4 +1,4 @@
-﻿using Talkable.Data.Models;
+﻿using Talkable.Data.Entities;
 using Talkable.Data.Repositories;
 
 namespace Talkable.Services

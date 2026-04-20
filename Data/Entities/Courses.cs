@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Talkable.Data.Models
+namespace Talkable.Data.Entities
 {
     public class Courses
     {

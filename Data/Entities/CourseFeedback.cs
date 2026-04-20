@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Talkable.Data.Models
+namespace Talkable.Data.Entities
 {
     public class CourseFeedback
     {

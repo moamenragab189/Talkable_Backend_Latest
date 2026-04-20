@@ -51,7 +51,8 @@
 // --------------------- Mg13 ---------------------------
 
 using Talkable.Data.Models;
-using Microsoft.AspNetCore.Hosting; // للتأكد من قراءة المكتبة بشكل صحيح
+using Microsoft.AspNetCore.Hosting;
+using Talkable.Data.Entities; // للتأكد من قراءة المكتبة بشكل صحيح
 
 namespace Talkable.Services
 {

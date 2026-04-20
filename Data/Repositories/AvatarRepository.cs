@@ -1,6 +1,6 @@
 ﻿
 using Microsoft.EntityFrameworkCore;
-using Talkable.Data.Models;
+using Talkable.Data.Entities;
 
 namespace Talkable.Data.Repositories
 {

@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
 using Microsoft.EntityFrameworkCore;
-namespace Talkable.Data.Models
+namespace Talkable.Data.Entities
 {
     public class User
     {

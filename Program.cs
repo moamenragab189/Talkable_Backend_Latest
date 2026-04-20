@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using Talkable.Data.Models;
+using Talkable.Data.Entities;
 using Talkable.Data.Repositories;
 using Talkable.Hubs;
+using Talkable.Mapping;
 using Talkable.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,10 +20,13 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
         policy
-            .AllowAnyOrigin()
+            .SetIsOriginAllowed(_ => true)   // ✅ يسمح لأي origin (كمبيوتر/موبايل)
             .AllowAnyHeader()
-            .AllowAnyMethod());
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
 });
+
 
 
 // ==== Dependency Injection  ====
@@ -33,6 +38,8 @@ builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<AnimationSeeder>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddSignalR();
+//builder.Services.AddAutoMapper(typeof(Program));
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -56,6 +63,7 @@ using (var scope = app.Services.CreateScope())
     var seeder = scope.ServiceProvider.GetRequiredService<AnimationSeeder>();
     await seeder.SeedAnimationsAsync();
 }
+app.UseRouting();
 app.UseCors("AllowAll");
 
 var provider = new FileExtensionContentTypeProvider();
@@ -92,11 +100,12 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseStaticFiles();
-app.MapHub<CallHub>("/callhub");
+app.MapHub<CallHub>("/callhub").RequireCors("AllowAll");
+app.MapControllers().RequireCors("AllowAll");
 
-app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+
 
 app.Run();

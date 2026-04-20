@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Threading.Tasks;
-using Talkable.Data;
+using Talkable.Data.Models;
 
 namespace Talkable.Hubs
 {
@@ -31,41 +32,36 @@ namespace Talkable.Hubs
         }
         public async Task<string> JoinRoom(string userId, string roomId)
         {
-            Console.WriteLine($"🟦 JoinRoom called: userId={userId}, roomId={roomId}");
 
             if (userId == null || roomId == null)
             {
-                Console.WriteLine("❌ JoinRoom: userId or roomId is null");
-                return "User Id or Room Id is null";
+                            return "User Id or Room Id is null";
             }
 
             var room = _rooms.FirstOrDefault(r => r.Id == roomId);
             if (room == null)
             {
-                Console.WriteLine($"❌ JoinRoom: Room {roomId} not found");
-                Console.WriteLine($"   Available rooms: {string.Join(", ", _rooms.Select(r => r.Id))}");
+                
                 return "Room Id is incorrect";
             }
 
             if (room.SecondUserId != null)
             {
-                Console.WriteLine($"❌ JoinRoom: Room {roomId} is full");
                 return "Room is full";
             }
 
             room.SecondUserId = userId;
             room.SecondUserConnectionId = Context.ConnectionId;
 
-            Console.WriteLine($"✅ JoinRoom: User {userId} joined room {roomId}");
-            Console.WriteLine($"   FirstUserConnId: {room.FirstUserConnectionId}");
-            Console.WriteLine($"   SecondUserConnId: {room.SecondUserConnectionId}");
-            Console.WriteLine($"   Sending notification to: {room.FirstUserConnectionId}");
+            
 
             await Clients.Client(room.FirstUserConnectionId).SendAsync("JoinRoomNotification", userId);
 
-            Console.WriteLine($"✅ JoinRoomNotification sent!");
+           
             return roomId;
         }
+
+       
         public async Task<string> SendOffer(string offer)
         {
             if (offer == null)

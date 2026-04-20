@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Talkable.Data.Models
+namespace Talkable.Data.Entities
 {
     public class MainContext : DbContext
     {
