@@ -61,7 +61,47 @@ namespace Talkable.Hubs
             return roomId;
         }
 
-       
+        public async Task SendFeatures(string roomId, float[] features)
+        {
+            var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+
+            if (room == null)
+                throw new Exception("Room not found");
+
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.PostAsJsonAsync(
+                    "http://127.0.0.1:8000/predict",
+                    new { features = features }
+                );
+
+                if (!response.IsSuccessStatusCode)
+                    throw new Exception("AI API failed");
+
+                var result = await response.Content
+                    .ReadFromJsonAsync<PredictionResponse>();
+
+                var connId = Context.ConnectionId;
+
+                string? targetConnId = null;
+
+                if (room.FirstUserConnectionId == connId)
+                    targetConnId = room.SecondUserConnectionId;
+                else
+                    targetConnId = room.FirstUserConnectionId;
+
+                if (string.IsNullOrEmpty(targetConnId))
+                    return;
+
+                // 🔥 send to other user
+                await Clients.Client(targetConnId)
+                    .SendAsync("ReceivePrediction", result.text, result.confidence);
+
+                // ✅ optional (debug)
+                await Clients.Caller
+                    .SendAsync("ReceivePrediction", result.text, result.confidence);
+            }
+        }
         public async Task<string> SendOffer(string offer)
         {
             if (offer == null)
@@ -183,7 +223,7 @@ namespace Talkable.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
           await LeaveRoom();
-            
+
         }
 
 
