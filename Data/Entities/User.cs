@@ -26,6 +26,7 @@ namespace Talkable.Data.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<UserCourses>? User_Courses { get; set; }
         public ICollection<CourseFeedback>? User_Feedback { get; set; }
+        public OTP? User_OTP { get; set; }
 
     }
     public enum UserType

@@ -2,7 +2,7 @@
 {
     public class PredictionResponse
     {
-        public string text { get; set; }
-        public double confidence { get; set; }
+        public string predicted_text { get; set; }
+        public float confidence { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Talkable.Data.Entities
         public virtual DbSet<CourseFeedback> Tb_CourseFeedback { get; set; }
         public virtual DbSet<UserCourses> Tb_UserCourses { get; set; } // done
         public virtual DbSet<Signs> Tb_Signs { get; set; }
+        public virtual DbSet<OTP> Tb_OTP { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

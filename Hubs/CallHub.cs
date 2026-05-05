@@ -8,6 +8,12 @@ namespace Talkable.Hubs
     public class CallHub : Hub
     {
         private static List<Room> _rooms = new List<Room>();
+
+        private readonly IHttpClientFactory _httpClientFactory;
+        public CallHub(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
         override public async Task OnConnectedAsync()
         {
             var connectionId = Context.ConnectionId;
@@ -61,46 +67,47 @@ namespace Talkable.Hubs
             return roomId;
         }
 
-        public async Task SendFeatures(string roomId, float[] features)
+        public async Task SendFeatures(float[] features)
         {
-            var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+            if (features == null || features.Length != 225)
+                return;
+
+            var connId = Context.ConnectionId;
+
+            // هات الروم من الكونكشن
+            var room = _rooms.FirstOrDefault(r =>
+                r.FirstUserConnectionId == connId || r.SecondUserConnectionId == connId);
 
             if (room == null)
-                throw new Exception("Room not found");
+                return;
 
-            using (var httpClient = new HttpClient())
-            {
-                var response = await httpClient.PostAsJsonAsync(
-                    "http://127.0.0.1:8000/predict",
-                    new { features = features }
-                );
+            // حدّد الطرف التاني (اللي هنبعتله الترجمة)
+            string? targetConnId =
+                room.FirstUserConnectionId == connId ? room.SecondUserConnectionId : room.FirstUserConnectionId;
 
-                if (!response.IsSuccessStatusCode)
-                    throw new Exception("AI API failed");
+            if (string.IsNullOrWhiteSpace(targetConnId))
+                return;
 
-                var result = await response.Content
-                    .ReadFromJsonAsync<PredictionResponse>();
+            var httpClient = _httpClientFactory.CreateClient();
+            httpClient.Timeout = TimeSpan.FromSeconds(3);
 
-                var connId = Context.ConnectionId;
+            var response = await httpClient.PostAsJsonAsync(
+                "https://lair-budget-sureness.ngrok-free.dev/predict",
+                new { features = features }
+            );
 
-                string? targetConnId = null;
+            if (!response.IsSuccessStatusCode)
+                return;
 
-                if (room.FirstUserConnectionId == connId)
-                    targetConnId = room.SecondUserConnectionId;
-                else
-                    targetConnId = room.FirstUserConnectionId;
+            var result = await response.Content.ReadFromJsonAsync<PredictionResponse>();
+            if (result == null)
+                return;
 
-                if (string.IsNullOrEmpty(targetConnId))
-                    return;
+            // ✅ ابعت الترجمة للطرف الآخر (الشخص الطبيعي – meeting-2)
+            await Clients.Client(targetConnId).SendAsync("ReceivePrediction", result.predicted_text, result.confidence);
 
-                // 🔥 send to other user
-                await Clients.Client(targetConnId)
-                    .SendAsync("ReceivePrediction", result.text, result.confidence);
-
-                // ✅ optional (debug)
-                await Clients.Caller
-                    .SendAsync("ReceivePrediction", result.text, result.confidence);
-            }
+            // (اختياري) ابعتها للمرسل كـ Debug
+            // await Clients.Caller.SendAsync("ReceivePrediction", result.text, result.confidence);
         }
         public async Task<string> SendOffer(string offer)
         {

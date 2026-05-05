@@ -37,9 +37,12 @@ builder.Services.AddScoped<AvatarRepository>();
 builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<AnimationSeeder>();
 builder.Services.AddScoped<JwtService>();
+builder.Services.AddScoped<EmailService>();
+builder.Services.AddScoped<UserProfile>();
+builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddSignalR();
 //builder.Services.AddAutoMapper(typeof(Program));
-
+builder.Services.AddHttpClient();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

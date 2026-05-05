@@ -7,7 +7,7 @@ using Talkable.Services;
 namespace Talkable.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class AvatarController : ControllerBase
     {
