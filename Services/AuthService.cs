@@ -1,4 +1,5 @@
-﻿using Talkable.Data.Entities;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Talkable.Data.Entities;
 using Talkable.Data.Repositories;
 
 namespace Talkable.Services
@@ -14,19 +15,20 @@ namespace Talkable.Services
         }
         public async Task register(User user)
         {
+            var existingUser = await _authRepository.CheckEmail(user.Email);
+            if (existingUser != null)
+            {
+                throw new Exception("Email already exists");
+            }
             await _authRepository.register(user);
         }
         public async Task<User?> login(string email, string password)
         {
             var user = await _authRepository.login(email, password);
-            if (user == null)
-            {
-                throw new Exception("Invalid email or password");
-            }
             return user;
         }
 
-        public async Task ForgotPassword(string email)
+        public async Task ConfirmEmail(string email,string requestType)
         {
             var user = await _authRepository.CheckEmail(email);
             if (user == null)
@@ -41,7 +43,14 @@ namespace Talkable.Services
                 ExpirationTime = DateTime.UtcNow.AddMinutes(10)
             };
             await _authRepository.SaveOTP(userOTP);
-            await _emailService.SendEmailAsync(email, "Password Reset OTP", otp);
+            if (requestType == "PasswordReset")
+            {
+                await _emailService.SendEmailAsync(email, "Password Reset OTP", otp);
+            }
+            else if (requestType == "EmailConfirmation")
+            {
+                await _emailService.SendEmailAsync(email, "Email Confirmation OTP", otp);
+            }
         }
         public async Task<bool> VerifyOTP(string email, string otp)
         {
@@ -68,7 +77,23 @@ namespace Talkable.Services
                 throw new Exception("Email not found");
             }
             user.Password = newPassword;
-            await _authRepository.UpdatePassword(user, newPassword);
+            await _authRepository.UpdateUser(user);
+        }
+
+        internal async Task ActivateEmail(string email)
+        {
+            var user = await _authRepository.CheckEmail(email);
+            if (user == null)
+            {
+                throw new Exception("Email not found");
+            }
+            user.IsActived = true;
+            await _authRepository.UpdateUser(user);
+        }
+
+        internal async Task<bool?> IsActivated(string email)
+        {
+            return await _authRepository.IsActivated(email);
         }
     }
 }

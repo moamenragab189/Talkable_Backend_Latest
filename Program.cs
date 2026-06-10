@@ -20,7 +20,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", policy =>
         policy
-            .SetIsOriginAllowed(_ => true)   // ✅ يسمح لأي origin (كمبيوتر/موبايل)
+            .SetIsOriginAllowed(_ => true)   
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials()
@@ -38,8 +38,9 @@ builder.Services.AddScoped<AvatarService>();
 builder.Services.AddScoped<AnimationSeeder>();
 builder.Services.AddScoped<JwtService>();
 builder.Services.AddScoped<EmailService>();
-builder.Services.AddScoped<UserProfile>();
 builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSignalR();
 //builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddHttpClient();
@@ -66,6 +67,11 @@ using (var scope = app.Services.CreateScope())
     var seeder = scope.ServiceProvider.GetRequiredService<AnimationSeeder>();
     await seeder.SeedAnimationsAsync();
 }
+
+
+
+
+
 app.UseRouting();
 app.UseCors("AllowAll");
 
@@ -102,13 +108,13 @@ app.UseStaticFiles(new StaticFileOptions
     }
 });
 
-app.UseStaticFiles();
 app.MapHub<CallHub>("/callhub").RequireCors("AllowAll");
-app.MapControllers().RequireCors("AllowAll");
+
 
 
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.MapControllers().RequireCors("AllowAll");
 
 app.Run();

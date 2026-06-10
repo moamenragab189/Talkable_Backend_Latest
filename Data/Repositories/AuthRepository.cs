@@ -41,11 +41,23 @@ namespace Talkable.Data.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdatePassword(User user, string newPassword)
+       /* public async Task UpdatePassword(User user, string newPassword)
         {
             user.Password = newPassword;
             _context.Tb_Users.Update(user);
             await _context.SaveChangesAsync();
+        }*/
+
+        internal async Task UpdateUser(User user)
+        {
+            _context.Tb_Users.Update(user);
+            await _context.SaveChangesAsync();
+        }
+
+        internal async Task<bool?> IsActivated(string email)
+        {
+            return await _context.Tb_Users.Where(u => u.Email == email).Select(u => u.IsActived).FirstOrDefaultAsync();
+
         }
     }
 }

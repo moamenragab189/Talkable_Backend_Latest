@@ -22,11 +22,12 @@ namespace Talkable.Data.Entities
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
+        public bool? IsActived { get; set; } = false;
         public UserType Type { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public ICollection<UserCourses>? User_Courses { get; set; }
         public ICollection<CourseFeedback>? User_Feedback { get; set; }
-        public OTP? User_OTP { get; set; }
+        public ICollection<OTP>? User_OTP { get; set; }
 
     }
     public enum UserType

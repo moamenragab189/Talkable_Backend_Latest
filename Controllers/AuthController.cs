@@ -17,13 +17,16 @@ namespace Talkable.Controllers
     {
         private readonly AuthService _authService;
         private readonly JwtService _jwtService;
-        private readonly IMapper _mapper;
-        public AuthController(AuthService authService, JwtService jwtService,IMapper mapper)
+       // private readonly IMapper _mapper;
+        public AuthController(AuthService authService, JwtService jwtService)
         {
             _authService = authService;
             _jwtService = jwtService;
-            _mapper = mapper;
+            //_mapper = mapper;
         }
+        
+
+        #region Authentication
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] User user)
         {
@@ -31,8 +34,9 @@ namespace Talkable.Controllers
             {
                 return BadRequest(ModelState);
             }
-          //  var user = _mapper.Map<User>(userDto);
+            //  var user = _mapper.Map<User>(userDto);
             await _authService.register(user);
+            await _authService.ConfirmEmail(user.Email, "EmailConfirmation");
             return Created();
         }
 
@@ -42,6 +46,11 @@ namespace Talkable.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
+            }
+            bool? IsActive = await _authService.IsActivated(usercred.email);
+            if (IsActive == null || !IsActive.Value)
+            {
+                return Unauthorized("account not activated");
             }
             var user = await _authService.login(usercred.email, usercred.password);
             if (user == null)
@@ -54,23 +63,46 @@ namespace Talkable.Controllers
             return Ok(user);
         }
 
-        [HttpPost("forgot-password")]
-        public async Task<IActionResult> ForgotPassword([FromQuery]string email)
+        [HttpPatch("verify-email")]
+        public async Task<IActionResult> VerifyEmail([FromQuery] string email, [FromQuery] string otp)
         {
             if (string.IsNullOrEmpty(email))
             {
                 return BadRequest("Email is required.");
             }
-            await _authService.ForgotPassword(email);
+            if (string.IsNullOrEmpty(otp))
+            {
+                return BadRequest("OTP is required.");
+            }
+            await _authService.VerifyOTP(email, otp);
+
+            await _authService.ActivateEmail(email);
+
+            return Ok();
+        } 
+        #endregion
+
+
+
+        #region Password Reset
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromQuery] string email)
+        {
+            if (string.IsNullOrEmpty(email))
+            {
+                return BadRequest("Email is required.");
+            }
+            await _authService.ConfirmEmail(email, "PasswordReset");
             return Ok();
         }
         [HttpPost("verify-otp")]
-        public async Task<IActionResult> VerifyOtp([FromQuery]string email, [FromQuery]string otp)
+        public async Task<IActionResult> VerifyOtp([FromQuery] string email, [FromQuery] string otp)
         {
             if (string.IsNullOrEmpty(email))
-                {
+            {
                 return BadRequest("Email is required.");
-                }
+            }
             if (string.IsNullOrEmpty(otp))
             {
                 return BadRequest("OTP is required.");
@@ -84,7 +116,7 @@ namespace Talkable.Controllers
         }
 
         [HttpPut("reset-password")]
-        public async Task<IActionResult> ResetPassword([FromQuery]string email, [FromQuery]string Password)
+        public async Task<IActionResult> ResetPassword([FromQuery] string email, [FromQuery] string Password)
         {
             if (string.IsNullOrEmpty(email))
             {
@@ -97,6 +129,11 @@ namespace Talkable.Controllers
             await _authService.ResetPassword(email, Password);
             return Ok();
         }
+
+        #endregion
+
+        
+
 
     }
 }
