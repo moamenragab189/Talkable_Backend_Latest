@@ -234,5 +234,28 @@ namespace Talkable.Hubs
         }
 
 
+        public async Task SendCaption(string caption)
+        {
+            var connId = Context.ConnectionId;
+            var room = _rooms.FirstOrDefault(r =>
+                r.FirstUserConnectionId == connId || r.SecondUserConnectionId == connId);
+
+            if (room == null) return;
+
+            string? targetConnId = room.FirstUserConnectionId == connId
+                ? room.SecondUserConnectionId
+                : room.FirstUserConnectionId;
+
+            if (string.IsNullOrWhiteSpace(targetConnId)) return;
+
+            await Clients.Client(targetConnId).SendAsync("ReceiveCaption", caption);
+        }
+        public string TestMethod()
+        {
+            return "Hello";
+        }
+
+
+
     }
 }

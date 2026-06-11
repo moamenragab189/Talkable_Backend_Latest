@@ -21,7 +21,7 @@ namespace Talkable.Data.Entities
             if (!optionsBuilder.IsConfigured)
             {
                 // Mg13
-                optionsBuilder.UseSqlServer(_configuration["ConnectionStrings:MoamenConnection"]);
+                optionsBuilder.UseSqlServer(_configuration["ConnectionStrings:GharebConnection"]);
 
             }
         }
